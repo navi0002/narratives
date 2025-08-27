@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Tutor</title>
+    <meta name="description" content="Learn faster with an interactive AI Tutor. Ask questions, get explanations, and practice with instant feedback." />
+    <meta name="theme-color" content="#111827" />
+    <link rel="icon" href="./assets/logo.svg" type="image/svg+xml" />
+    <link rel="preload" href="./styles.css" as="style" />
+    <link rel="stylesheet" href="./styles.css" />
+    <meta property="og:title" content="AI Tutor" />
+    <meta property="og:description" content="Learn faster with an interactive AI Tutor." />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="AI Tutor home">
+        <img class="brand__logo" src="./assets/logo.svg" alt="AI Tutor logo" width="28" height="28" />
+        <span class="brand__name">AI Tutor</span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#demo">Demo</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="actions">
+        <button id="themeToggle" class="btn btn--ghost" type="button" aria-label="Toggle theme">🌗</button>
+        <a class="btn btn--primary" href="#demo">Try the demo</a>
+      </div>
+    </header>
+
+    <main id="home">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__content">
+          <h1 id="hero-title">Your personal AI Tutor</h1>
+          <p class="lead">Ask questions, get clear explanations, and practice with instant feedback.</p>
+          <div class="cta">
+            <a class="btn btn--primary" href="#demo">Start learning</a>
+            <a class="btn btn--secondary" href="#features">See features</a>
+          </div>
+        </div>
+        <div class="hero__art" aria-hidden="true"></div>
+      </section>
+
+      <section id="features" class="section section--alt" aria-labelledby="features-title">
+        <div class="container">
+          <h2 id="features-title">Built to help you learn</h2>
+          <div class="grid grid--3">
+            <article class="card">
+              <h3>Step‑by‑step explanations</h3>
+              <p>Break complex topics into easy, digestible steps tailored to your level.</p>
+            </article>
+            <article class="card">
+              <h3>Practice with feedback</h3>
+              <p>Try problems and get instant feedback and hints when you need them.</p>
+            </article>
+            <article class="card">
+              <h3>Study your way</h3>
+              <p>Switch between concise summaries and deep dives with a single tap.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="demo" class="section" aria-labelledby="demo-title">
+        <div class="container">
+          <h2 id="demo-title">Try the AI Tutor</h2>
+          <div class="chat">
+            <div id="chatWindow" class="chat__window" aria-live="polite" aria-label="Chat transcript"></div>
+            <form id="chatForm" class="chat__form" autocomplete="off">
+              <label class="visually-hidden" for="chatInput">Your message</label>
+              <textarea id="chatInput" class="input" rows="2" placeholder="Ask a question... (Shift+Enter for new line)"></textarea>
+              <button class="btn btn--primary" type="submit">Send</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="section section--alt" aria-labelledby="faq-title">
+        <div class="container">
+          <h2 id="faq-title">Frequently asked questions</h2>
+          <details class="faq">
+            <summary>Is this connected to a real AI?</summary>
+            <p>This demo uses on‑device code to simulate replies for privacy and speed.</p>
+          </details>
+          <details class="faq">
+            <summary>Can I use it on mobile?</summary>
+            <p>Yes. The site is responsive and works on phones, tablets, and desktops.</p>
+          </details>
+          <details class="faq">
+            <summary>How do I keep my data private?</summary>
+            <p>All messages in this demo stay in your browser and are never uploaded.</p>
+          </details>
+        </div>
+      </section>
+
+      <section id="contact" class="section" aria-labelledby="contact-title">
+        <div class="container">
+          <h2 id="contact-title">Get in touch</h2>
+          <p>Have feedback or ideas? Email <a href="mailto:hello@example.com">hello@example.com</a>.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <a class="brand" href="#home" aria-label="AI Tutor home">
+          <img class="brand__logo" src="./assets/logo.svg" alt="AI Tutor logo" width="20" height="20" />
+          <span class="brand__name">AI Tutor</span>
+        </a>
+        <small>© <span id="year"></span> AI Tutor. All rights reserved.</small>
+      </div>
+    </footer>
+
+    <script src="./script.js" defer></script>
+  </body>
+  </html>
+
