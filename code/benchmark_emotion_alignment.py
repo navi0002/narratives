@@ -142,6 +142,39 @@ def compute_emotion_features(chunks: List[Tuple[float, float, str]], emo_pipe) -
     return feats, labels, centers
 
 
+def compute_emotion_features_mock(chunks: List[Tuple[float, float, str]]) -> Tuple[np.ndarray, List[str], np.ndarray]:
+    """
+    Lightweight heuristic emotion features without transformers/torch.
+    Uses simple lexical cues to produce 6 emotions and normalizes to probabilities.
+    """
+    labels = ["joy", "sadness", "anger", "fear", "surprise", "disgust"]
+    if len(chunks) == 0:
+        return np.zeros((0, len(labels))), labels, np.zeros((0,))
+
+    positive_words = {"love", "happy", "great", "good", "joy", "like", "win"}
+    negative_words = {"bad", "sad", "angry", "hate", "fear", "worry", "lose"}
+    surprise_words = {"wow", "suddenly", "unexpected", "surprise"}
+    disgust_words = {"gross", "disgust", "yuck"}
+
+    feats = np.zeros((len(chunks), len(labels)), dtype=np.float32)
+    centers = np.array([(s + e) / 2.0 for (s, e, _) in chunks], dtype=np.float32)
+    for i, (_, _, text) in enumerate(chunks):
+        tokens = set((text or "").lower().split())
+        joy = len(tokens & positive_words)
+        sadness = 1 if ("sad" in tokens or "cry" in tokens) else 0
+        anger = 1 if ("angry" in tokens or "anger" in tokens or "mad" in tokens or "hate" in tokens) else 0
+        fear = 1 if ("fear" in tokens or "scared" in tokens or "worry" in tokens) else 0
+        surprise = len(tokens & surprise_words)
+        disgust = len(tokens & disgust_words)
+        vec = np.array([joy, sadness, anger, fear, surprise, disgust], dtype=np.float32)
+        if vec.sum() == 0:
+            vec = np.ones_like(vec) / len(vec)
+        else:
+            vec = vec / vec.sum()
+        feats[i] = vec
+    return feats, labels, centers
+
+
 def hrf_spm(tr: float, oversampling: int = 16, time_length: float = 32.0, onset: float = 0.0) -> np.ndarray:
     """
     Approximate SPM HRF sampled at TR. Based on two gamma functions.
@@ -207,12 +240,12 @@ def fit_ridge_encoding(X: np.ndarray, Y: np.ndarray, alphas: List[float], n_spli
     Y_pred = np.zeros_like(Y)
 
     for train_idx, test_idx in kf.split(Xz):
-        model = RidgeCV(alphas=alphas, store_cv_values=False)
+        model = RidgeCV(alphas=alphas, cv=5)
         model.fit(Xz[train_idx], Y[train_idx])
         Y_pred[test_idx] = model.predict(Xz[test_idx])
 
     # Fit on full data for coefficients (optional)
-    model_final = RidgeCV(alphas=alphas, store_cv_values=False)
+    model_final = RidgeCV(alphas=alphas, cv=5)
     model_final.fit(Xz, Y)
     coefs = model_final.coef_
     return Y_pred, coefs
@@ -247,6 +280,7 @@ def main():
     parser.add_argument("--n_lags", type=int, default=4, help="Number of FIR lags (in TRs)")
     parser.add_argument("--alphas", type=str, default="1.0,10.0,100.0,1000.0", help="Ridge alphas (comma-separated)")
     parser.add_argument("--out_dir", type=str, required=True, help="Output directory for maps and metrics")
+    parser.add_argument("--mock_emotion", action="store_true", help="Use lightweight heuristic emotion features (no transformers)")
     parser.add_argument("--save_design", action="store_true", help="Save design matrix (npz)")
 
     args = parser.parse_args()
@@ -284,8 +318,11 @@ def main():
 
     # Build chunks and compute emotion features
     chunks = build_text_chunks(words_df, chunk_s=args.chunk_s)
-    emo_pipe = load_emotion_pipeline()
-    emo_feats, emo_labels, feat_times = compute_emotion_features(chunks, emo_pipe)
+    if args.mock_emotion:
+        emo_feats, emo_labels, feat_times = compute_emotion_features_mock(chunks)
+    else:
+        emo_pipe = load_emotion_pipeline()
+        emo_feats, emo_labels, feat_times = compute_emotion_features(chunks, emo_pipe)
 
     # Resample to TR grid and build FIR design
     X = resample_features_to_tr(feat_times, emo_feats, tr=tr, n_trs=n_trs, start_offset_s=onset_s)
@@ -325,6 +362,7 @@ def main():
         "n_lags": int(args.n_lags),
         "alphas": alphas,
         "emotion_labels": emo_labels,
+        "mock_emotion": bool(args.mock_emotion),
         "output_map": out_fn
     }
     with open(os.path.join(args.out_dir, f"{args.subject}_task-{args.task}_emotion_alignment_summary.json"), "w") as f:

@@ -1,0 +1,27 @@
+{
+  "subject": "sub-001",
+  "task": "pieman",
+  "run": null,
+  "tr": 2.0,
+  "n_trs": 120,
+  "onset_s": 8.0,
+  "duration_s": 232.0,
+  "chunk_s": 4.0,
+  "n_lags": 4,
+  "alphas": [
+    1.0,
+    10.0,
+    100.0,
+    1000.0
+  ],
+  "emotion_labels": [
+    "joy",
+    "sadness",
+    "anger",
+    "fear",
+    "surprise",
+    "disgust"
+  ],
+  "mock_emotion": true,
+  "output_map": "/workspace/mock_out/sub-001_task-pieman_emotion_alignment_r.nii.gz"
+}
