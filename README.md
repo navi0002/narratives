@@ -48,6 +48,35 @@ This repository contains both scripts used to prepare the data for sharing (`sta
 * `plot_qc.py`: Plot tSNR and FD from MRIQC, as well as intrinsic smoothness (Figure 2).
 * `plot_isc.py`: Plot ISC and lagged ISC for the early auditory cortex ROI (Figure 3).
 * `gifti_io.py`: Helper functions for reading and writing GIfTI surface files in Python.
+* `benchmark_emotion_alignment.py`: Minimal brain–language alignment benchmark that extracts chunked emotion features from transcripts (via Hugging Face) and fits voxelwise ridge encoding models to predict BOLD, saving a correlation map.
+
+##### Quickstart: Emotion alignment benchmark
+
+1. Create/activate the environment (or add `transformers`, `torch`, `tqdm`):
+   - conda env: see `staging/environment-flexible.yml` and ensure `scikit-learn`, `transformers`, `torch` are installed.
+2. Run for a subject/task with either Gentle alignment JSON or a plain transcript:
+
+```bash
+python code/benchmark_emotion_alignment.py \
+  --bids_root /path/to/bids \
+  --subject sub-001 \
+  --task pieman \
+  --align_json /path/to/stimuli/gentle/pieman/align.json \
+  --out_dir /tmp/emotion_align
+```
+
+If you do not have alignment JSON, provide a transcript and the script will uniformly distribute words across the story duration inferred from `events.tsv`:
+
+```bash
+python code/benchmark_emotion_alignment.py \
+  --bids_root /path/to/bids \
+  --subject sub-001 \
+  --task pieman \
+  --transcript /path/to/pieman.txt \
+  --out_dir /tmp/emotion_align
+```
+
+Outputs: a voxelwise correlation map (`*_emotion_alignment_r.nii.gz`) and a small JSON summary in `--out_dir`.
 
 #### Acknowledgments
 We thank Leigh Nystrom, Mark Pinsk, Garrett McGrath, and the administrative staff at the Scully Center for the Neuroscience of Mind and Behavior and the Princeton Neuroscience Institute, as well as Elizabeth McDevitt, Anne Mennen, and members of Pygers support group. We thank Franklin Feingold for assistance in data sharing, as well as Chris Gorgolewski, Tal Yarkoni, Satrajit S. Ghosh, Avital Hahamy, Mohamed Amer, Indranil Sur, Xiao Lin, and Ajay Divarakian for helpful feedback on the data and analysis. This work was supported by the National Institutes of Health (NIH) grants R01-MH094480 (U.H.), DP1-HD091948 (U.H.), R01-MH112566 (U.H.), R01-MH112357 (K.A.N., U.H), T32-MH065214 (K.A.N), by the Defense Advanced Research Projects Agency (DARPA) Brain-to-Brain Seedling contract number FA8750-18-C-0213 (U.H.), and by the Intel Corporation. The views, opinions, and/or conclusions contained in this paper are those of the authors and should not be interpreted as representing the official views or policies, either expressed or implied of the NIH, DARPA, or Intel.

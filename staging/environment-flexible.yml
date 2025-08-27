@@ -15,3 +15,8 @@ dependencies:
   - pip=20.2.3
   - scipy=1.5.2
   - seaborn=0.11.0
+   - scikit-learn
+   - pip:
+     - transformers
+     - torch
+     - tqdm
