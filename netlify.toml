@@ -1,0 +1,16 @@
+[build]
+base = "ai-tutor"
+publish = "."
+command = ""
+
+[[headers]]
+for = "/*"
+  [headers.values]
+  Cache-Control = "public, max-age=3600"
+
+# Optional SPA fallback for client-side routing (safe for static too)
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
